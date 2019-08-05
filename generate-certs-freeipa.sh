@@ -73,9 +73,9 @@ do
   then
     echo "osp/$host@${config['ipaRealm']} exists - skipping"
   else
-   echo "Adding service osp/$host@${config['ipaRealm']} to be managed by $(hostname --fqdn)"
-   /usr/bin/ipa service-add "osp/$host@${config['ipaRealm']}" >/dev/null 2>&1
-   /usr/bin/ipa service-add-host --hosts=$(hostname --fqdn) "osp/$host@${config['ipaRealm']}" >/dev/null 2>&1
+    echo "Adding service osp/$host@${config['ipaRealm']} to be managed by $(hostname --fqdn)"
+    /usr/bin/ipa service-add "osp/$host@${config['ipaRealm']}" >/dev/null 2>&1
+    /usr/bin/ipa service-add-host --hosts=$(hostname --fqdn) "osp/$host@${config['ipaRealm']}" >/dev/null 2>&1
   fi
   DNS="$DNS -D $host"
 done
