@@ -1,0 +1,49 @@
+# Run this as part of a post deployment step for TripleO/OSPDirO deployment
+# Will log into 'clients' and check to see if the directories in
+# 'logpaths' exist, if they do then include them (*.log) for log forwarding
+---
+- name: Configure rsyslog for forwarding logs
+  hosts: clients
+  become: true
+  vars:
+    logging_outputs:
+      - name: central_forwarding
+        type: forwards
+        target: rsyslog-server.home.idm.lan
+        udp_port: 514
+        permitted_server: 'rsyslog-server.home.idm.lan'
+    logpaths:
+      - /var/log/containers/aodh
+      - /var/log/containers/cinder
+      - /var/log/containers/glance
+      - /var/log/containers/haproxy
+      - /var/log/containers/heat
+      - /var/log/containers/horizon
+      - /var/log/containers/httpd
+      - /var/log/containers/keystone
+      - /var/log/containers/libvirt
+      - /var/log/containers/memcached
+      - /var/log/containers/mysql
+      - /var/log/containers/neutron
+      - /var/log/containers/nova
+      - /var/log/containers/octavia-amphorae
+      - /var/log/containers/openvswitch
+      - /var/log/containers/placement
+      - /var/log/containers/rabbitmq
+      - /var/log/containers/redis
+      - /var/log/containers/stdouts
+      - /var/log/containers/swift
+  tasks:
+    - name: Check if log directories exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: dir_stats
+      loop: "{{ logpaths }}"
+    - name: Set logging inputs based on directory existence
+      set_fact:
+        logging_inputs: "{{ logging_inputs | default([]) + [{'name': item.item | regex_replace('/var/log/containers/(.*)', '\\1_logs'), 'type': 'files', 'input_log_path': item.item + '/*.log'}] }}"
+      loop: "{{ dir_stats.results }}"
+      when: item.stat.exists
+    - name: Apply rsyslog configuration
+      ansible.builtin.include_role:
+        name: redhat.rhel_system_roles.logging
