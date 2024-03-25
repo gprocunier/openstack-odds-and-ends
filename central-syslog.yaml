@@ -1,9 +1,15 @@
 # Run this as part of a post deployment step for TripleO/OSPDirO deployment
-# Will log into 'clients' and check to see if the directories in
+# Will log in and check to see if the directories in
 # 'logpaths' exist, if they do then include them (*.log) for log forwarding
+#
+# Depending on the services you have deployed, add additional logging folders
+# 
+# if this is run on the openstackclient pod, you can use the dynamic inventory 
+# generated in /home/cloud-admin to run this against 'Controller', 'Compute',
+# or 'all'
 ---
 - name: Configure rsyslog for forwarding logs
-  hosts: clients
+  hosts: all
   become: true
   vars:
     logging_outputs:
