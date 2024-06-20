@@ -1,0 +1,365 @@
+heat_template_version: wallaby
+description: initialize vlan provider networks for zzz-customer
+
+parameters:
+  unix-env:
+    type: string
+  windows-env:
+    type: string
+
+resources:
+
+  # Default floating ip / snat network
+  zzz-customer-provider-net-vlan-3501:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-3501
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 3501
+      shared: true
+      port_security_enabled: true
+      router_external: true
+
+  # Manila NFS Direct Network
+  zzz-customer-provider-net-vlan-3507:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-3507
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 3507
+      shared: true
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-32:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-32
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 32
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-33:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-33
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 33
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-36:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-36
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 36
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-38:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-38
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 38
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-96:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-96
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 96
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-97:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-97
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 97
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-98:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-98
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 98
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  zzz-customer-provider-net-vlan-148:
+    type: OS::Neutron::ProviderNet
+    properties:
+      name: zzz-customer-vlan-148
+      network_type: vlan
+      physical_network: datacentre
+      segmentation_id: 148
+      shared: false
+      port_security_enabled: true
+      router_external: true
+
+  # Enable OpenStack IPAM for the External Network
+  zzz-customer-subnet-vlan-3501:
+    type: OS::Neutron::Subnet
+    properties:
+      name: zzz-customer-vlan-3501-subnet
+      network: { get_resource: zzz-customer-provider-net-vlan-3501 }
+      cidr: 172.16.202.0/24
+      ip_version: 4
+      allocation_pools:
+        - start: 172.16.202.100
+          end: 172.16.202.250
+      gateway_ip: 172.16.202.1
+      enable_dhcp: true
+      dns_nameservers:
+        - 172.18.70.27
+        - 172.17.70.27
+
+
+  # Enable OpenStack IPAM for the Manila NFS Direct Network
+  zzz-customer-subnet-vlan-3507:
+    type: OS::Neutron::Subnet
+    properties:
+      name: zzz-customer-vlan-3507-subnet
+      network: { get_resource: zzz-customer-provider-net-vlan-3507 }
+      cidr: 172.16.203.192/26
+      ip_version: 4
+      allocation_pools:
+        - start: 172.16.203.195
+          end: 172.16.203.250
+      # gateway_ip: 172.16.203.193
+      enable_dhcp: true
+
+  # Do not enable/use OpenStack IPAM in the lab  (for vm networks)
+  zzz-customer-subnet-vlan-32:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: zzz-customer-provider-net-vlan-32 }
+      cidr: 172.16.32.0/24
+      ip_version: 4
+      allocation_pools: [ ]
+      gateway_ip: 172.16.32.1
+      enable_dhcp: false
+
+  zzz-customer-subnet-vlan-33:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: zzz-customer-provider-net-vlan-33 }
+      cidr: 172.16.33.0/24
+      ip_version: 4
+      allocation_pools: [ ]
+      gateway_ip: 172.16.33.1
+      enable_dhcp: false
+
+  zzz-customer-subnet-vlan-36:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: zzz-customer-provider-net-vlan-36 }
+      cidr: 172.16.36.0/24
+      ip_version: 4
+      allocation_pools: [ ]
+      gateway_ip: 172.16.36.1
+      enable_dhcp: false
+
+  zzz-customer-subnet-vlan-38:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: zzz-customer-provider-net-vlan-38 }
+      cidr: 172.16.38.0/24
+      ip_version: 4
+      allocation_pools: [ ]
+      gateway_ip: 172.16.38.1
+      enable_dhcp: false
+
+  zzz-customer-subnet-vlan-96:
+     type: OS::Neutron::Subnet
+     properties:
+       network: { get_resource: zzz-customer-provider-net-vlan-96 }
+       cidr: 172.16.96.0/24
+       ip_version: 4
+       allocation_pools: [ ]
+       gateway_ip: 172.16.96.1
+       enable_dhcp: false
+
+  zzz-customer-subnet-vlan-97:
+     type: OS::Neutron::Subnet
+     properties:
+       network: { get_resource: zzz-customer-provider-net-vlan-97 }
+       cidr: 172.16.97.0/24
+       ip_version: 4
+       allocation_pools: [ ]
+       gateway_ip: 172.16.97.1
+       enable_dhcp: false
+
+  zzz-customer-subnet-vlan-98:
+     type: OS::Neutron::Subnet
+     properties:
+       network: { get_resource: zzz-customer-provider-net-vlan-98 }
+       cidr: 172.16.98.0/24
+       ip_version: 4
+       allocation_pools: [ ]
+       gateway_ip: 172.16.98.1
+       enable_dhcp: false
+
+  zzz-customer-subnet-vlan-148:
+     type: OS::Neutron::Subnet
+     properties:
+       network: { get_resource: zzz-customer-provider-net-vlan-148 }
+       cidr: 172.16.148.0/24
+       ip_version: 4
+       allocation_pools: [ ]
+       gateway_ip: 172.16.148.1
+       enable_dhcp: false
+
+### RBAC for controlling what tenants have access to networks defined in the admin project
+
+  zzz-customer-provider-net-vlan-32-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-32 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-32-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-32 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-33-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-33 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-33-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-33 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-36-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-36 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-36-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-36 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-38-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-38 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-38-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-38 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-96-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-96 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-96-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-96 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-97-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-97 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-97-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-97 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-98-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-98 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-98-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-98 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
+
+  zzz-customer-provider-net-vlan-148-rbac-ust-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-148 }
+      object_type: network
+      target_tenant: { get_param: unix-env }
+
+  zzz-customer-provider-net-vlan-148-rbac-wst-dev:
+    type: OS::Neutron::RBACPolicy
+    properties:
+      action: access_as_shared
+      object_id: { get_resource: zzz-customer-provider-net-vlan-148 }
+      object_type: network
+      target_tenant: { get_param: windows-env }
